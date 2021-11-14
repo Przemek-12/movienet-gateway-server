@@ -19,13 +19,10 @@ public class LoginFilter extends ZuulFilter {
     @Value("${oauth2.gateway.client-secret}")
     private String gatewayClientSecret;
 
-    private final String REQUEST_URI_PROPERTY = "requestURI";
-    private final String OAUTH_TOKEN_ENDPOINT = "/oauth/token";
-
     @Override
     public boolean shouldFilter() {
         RequestContext ctx = RequestContext.getCurrentContext();
-        return ctx.get(REQUEST_URI_PROPERTY).equals(OAUTH_TOKEN_ENDPOINT);
+        return ctx.get(SecurityUtils.REQUEST_URI_PROPERTY).equals(SecurityUtils.OAUTH_TOKEN_ENDPOINT);
     }
 
     @Override
