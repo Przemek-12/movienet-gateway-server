@@ -1,4 +1,4 @@
-package com.gateway.infrastructure.security;
+package com.gateway.infrastructure.zuulfilters;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
@@ -11,7 +11,7 @@ import com.netflix.zuul.exception.ZuulException;
 import com.nimbusds.jose.util.Base64;
 
 @Component
-public class LoginFilter extends ZuulFilter {
+public class TokenRequestFilter extends ZuulFilter {
 
     @Value("${oauth2.gateway.client-id}")
     private String gatewayClientId;
@@ -21,8 +21,7 @@ public class LoginFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-        RequestContext ctx = RequestContext.getCurrentContext();
-        return ctx.get(SecurityUtils.REQUEST_URI_PROPERTY).equals(SecurityUtils.OAUTH_TOKEN_ENDPOINT);
+        return ZuulUtils.isTokenRequest(RequestContext.getCurrentContext());
     }
 
     @Override
