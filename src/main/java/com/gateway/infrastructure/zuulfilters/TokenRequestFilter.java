@@ -1,5 +1,7 @@
 package com.gateway.infrastructure.zuulfilters;
 
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
@@ -8,7 +10,6 @@ import com.google.common.net.HttpHeaders;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
-import com.nimbusds.jose.util.Base64;
 
 @Component
 public class TokenRequestFilter extends ZuulFilter {
@@ -42,9 +43,10 @@ public class TokenRequestFilter extends ZuulFilter {
     }
 
     private String generateBasicAuth() {
+        String basicAuthToEncode = gatewayClientId + ":" + gatewayClientSecret;
         return new StringBuilder()
                 .append("Basic ")
-                .append(Base64.encode(gatewayClientId + ":" + gatewayClientSecret))
+                .append(Base64.getEncoder().encodeToString(basicAuthToEncode.getBytes()))
                 .toString();
     }
 

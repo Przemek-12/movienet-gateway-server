@@ -1,22 +1,19 @@
 package com.gateway.infrastructure.zuulfilters;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
-import org.json.JSONObject;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
-import com.google.common.io.CharStreams;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 
 @Component
-public class SetCookiesOnLoginFilter extends ZuulFilter {
+public class SetCookieOnLogOutFilter extends ZuulFilter {
 
     @Override
     public String filterType() {
@@ -30,27 +27,23 @@ public class SetCookiesOnLoginFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-        return ZuulUtils.isTokenRequest(RequestContext.getCurrentContext());
+        return ZuulUtils.isLogOutRequest(RequestContext.getCurrentContext());
     }
 
     @Override
     public Object run() throws ZuulException {
         RequestContext context = RequestContext.getCurrentContext();
         try (final InputStream responseDataStream = context.getResponseDataStream()) {
-            String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, "UTF-8"));
-            JSONObject response = new JSONObject(responseData);
-            String authCookie = prepareAuthCookie(response.getString("access_token")).toString();
-            context.addZuulResponseHeader(HttpHeaders.SET_COOKIE, authCookie);
-            context.setResponseBody("");
+            context.addZuulResponseHeader(HttpHeaders.SET_COOKIE, prepareLogOutCookie().toString());
         } catch (Exception e) {
             throw new ZuulException(e, HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
         return null;
     }
 
-    private ResponseCookie prepareAuthCookie(String accessToken) {
+    private ResponseCookie prepareLogOutCookie() {
         return ResponseCookie
-                .from(HttpHeaders.AUTHORIZATION, accessToken)
+                .from(HttpHeaders.AUTHORIZATION, "")
                 .httpOnly(true)
 //                .secure(true)
                 .path("/")
@@ -59,4 +52,5 @@ public class SetCookiesOnLoginFilter extends ZuulFilter {
                 .sameSite("Strict")
                 .build();
     }
+
 }

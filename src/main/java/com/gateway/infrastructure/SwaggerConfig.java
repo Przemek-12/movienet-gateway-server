@@ -38,10 +38,11 @@ public class SwaggerConfig {
         @Override
         public List<SwaggerResource> get() {
             List<SwaggerResource> resources = new ArrayList<>();
-            resources.add(swaggerResource("video-service", "/api/video-service/v2/api-docs", "2.0"));
-            resources.add(swaggerResource("video-stream-service", "/api/video-stream-service/v2/api-docs", "2.0"));
-            resources.add(swaggerResource("user-service", "/api/user-service/v2/api-docs", "2.0"));
-            resources.add(swaggerResource("auth-service", "/api/auth-service/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("video-service", "/video-service/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("video-stream-service", "/video-stream-service/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("user-service", "/user-service/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("auth-service", "/auth-service/v2/api-docs", "2.0"));
+            resources.add(swaggerResource("content-service", "/content-service/v2/api-docs", "2.0"));
             return resources;
         }
 
